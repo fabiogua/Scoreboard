@@ -28,37 +28,26 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package com.jtconnors.scoreboard.fx2;
 
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
-import com.jtconnors.scoreboard.fx2.impl.bulb.BulbHockeyScoreboard;
-import com.jtconnors.scoreboard.fx2.impl.led.LEDHockeyScoreboard;
+import com.jtconnors.scoreboard.fx2.impl.led.LEDWaterpoloScoreboard;
 import com.jtconnors.scoreboard.common.Globals;
 
-public class MainRemoteFullScreenTV extends Application {
+public class MainWaterpolo extends Application {
 
     @Override
     public void start(Stage stage) {
         Group group = new Group();
-        stage.initStyle(StageStyle.TRANSPARENT);
-        stage.setFullScreen(true);
-        LEDHockeyScoreboard bulbScoreboard = new LEDHockeyScoreboard(
-                Screen.getPrimary().getBounds().getWidth(),
-                Screen.getPrimary().getBounds().getHeight(),
-                Globals.instance().isSlave);
-        System.out.println("FullScreen: width = " +
-                Screen.getPrimary().getBounds().getWidth() +
-                ", height = "  + Screen.getPrimary().getBounds().getHeight());
-        Globals.instance().hockeyScoreboardRef = bulbScoreboard;
-        group.getChildren().add(bulbScoreboard);
+        LEDWaterpoloScoreboard ledScoreboard
+                = new LEDWaterpoloScoreboard(711, 400, Globals.instance().isSlave);
+        Globals.instance().waterpoloScoreboardRef = ledScoreboard;
+        group.getChildren().add(ledScoreboard);
         Scene scene = new Scene(group, group.getLayoutBounds().getWidth(),
                 group.getLayoutBounds().getHeight());
         stage.setScene(scene);
@@ -70,14 +59,9 @@ public class MainRemoteFullScreenTV extends Application {
     }
 
     public static void main(String[] args) {
-        Globals.instance().isSlave = true;
-        Globals.instance().isTV = true;
-        Globals.instance().unlitOpacity = 0.05;
-        Globals.instance().useIPSocket = true;
-        Globals.instance().displaySocket = true;
-        
         Globals.instance().parseArgs(args);
-        
-        Application.launch(MainRemoteFullScreenTV.class, args);
+        Globals.instance().displaySocket = true;
+//        Globals.debugFlags = Constants.DEBUG_SEND;
+        Application.launch(Main.class, args);
     }
 }

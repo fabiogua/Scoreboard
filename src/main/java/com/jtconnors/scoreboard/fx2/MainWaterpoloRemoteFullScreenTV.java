@@ -39,26 +39,25 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
-import com.jtconnors.scoreboard.fx2.impl.bulb.BulbHockeyScoreboard;
-import com.jtconnors.scoreboard.fx2.impl.led.LEDHockeyScoreboard;
+import com.jtconnors.scoreboard.fx2.impl.led.LEDWaterpoloScoreboard;
 import com.jtconnors.scoreboard.common.Globals;
 
-public class MainRemoteFullScreenTV extends Application {
+public class MainWaterpoloRemoteFullScreenTV extends Application {
 
     @Override
     public void start(Stage stage) {
         Group group = new Group();
         stage.initStyle(StageStyle.TRANSPARENT);
         stage.setFullScreen(true);
-        LEDHockeyScoreboard bulbScoreboard = new LEDHockeyScoreboard(
+        LEDWaterpoloScoreboard ledScoreboard = new LEDWaterpoloScoreboard(
                 Screen.getPrimary().getBounds().getWidth(),
                 Screen.getPrimary().getBounds().getHeight(),
                 Globals.instance().isSlave);
         System.out.println("FullScreen: width = " +
                 Screen.getPrimary().getBounds().getWidth() +
                 ", height = "  + Screen.getPrimary().getBounds().getHeight());
-        Globals.instance().hockeyScoreboardRef = bulbScoreboard;
-        group.getChildren().add(bulbScoreboard);
+        Globals.instance().waterpoloScoreboardRef = ledScoreboard;
+        group.getChildren().add(ledScoreboard);
         Scene scene = new Scene(group, group.getLayoutBounds().getWidth(),
                 group.getLayoutBounds().getHeight());
         stage.setScene(scene);

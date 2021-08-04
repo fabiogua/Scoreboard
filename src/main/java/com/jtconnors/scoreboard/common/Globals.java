@@ -38,6 +38,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import com.jtconnors.scoreboard.fx2.framework.FocusableParent;
 import com.jtconnors.scoreboard.fx2.framework.hockey.HockeyScoreboard;
+import com.jtconnors.scoreboard.fx2.framework.waterpolo.WaterpoloScoreboard;
+import com.jtconnors.scoreboard.fx2.impl.led.LEDWaterpoloScoreboard;
 
 /*
  * Global variables
@@ -77,6 +79,10 @@ public class Globals {
      * Reference to HockeyScoreboard instance
      */
     public HockeyScoreboard hockeyScoreboardRef;
+    /*
+     * Reference to WaterpoloScoreboard instance
+     */
+    public WaterpoloScoreboard waterpoloScoreboardRef;
     /*
      * Kludge needed to prevent multiple nodes handling the same keyboard
      * input more than once.

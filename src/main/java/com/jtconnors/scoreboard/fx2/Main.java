@@ -36,7 +36,7 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import com.jtconnors.scoreboard.fx2.impl.bulb.BulbHockeyScoreboard;
+import com.jtconnors.scoreboard.fx2.impl.led.LEDHockeyScoreboard;
 import com.jtconnors.scoreboard.common.Globals;
 
 public class Main extends Application {
@@ -44,8 +44,8 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) {
         Group group = new Group();
-        BulbHockeyScoreboard bulbScoreboard
-                = new BulbHockeyScoreboard(711, 400, Globals.instance().isSlave);
+        LEDHockeyScoreboard bulbScoreboard
+                = new LEDHockeyScoreboard(711, 400, Globals.instance().isSlave);
         Globals.instance().hockeyScoreboardRef = bulbScoreboard;
         group.getChildren().add(bulbScoreboard);
         Scene scene = new Scene(group, group.getLayoutBounds().getWidth(),

@@ -28,7 +28,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.jtconnors.scoreboard.fx2.framework.hockey;
+package com.jtconnors.scoreboard.fx2.framework.waterpolo;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -76,13 +76,12 @@ import com.jtconnors.scoreboard.fx2.util.FXUtils;
 import com.jtconnors.scoreboard.common.DigitsDisplayStates;
 import com.jtconnors.scoreboard.fx2.framework.FxConstants;
 import com.jtconnors.scoreboard.fx2.framework.XMLSpec;
-import com.jtconnors.scoreboard.fx2.framework.waterpolo.WaterpoloScoreboard;
 import com.jtconnors.scoreboard.fx2.networking.FxMulticastReader;
 import com.jtconnors.scoreboard.fx2.networking.FxMulticastWriter;
 import com.jtconnors.scoreboard.fx2.networking.FxMultipleSocketWriter;
 
 /*
- * This abstract class defines the behavior of a hockey scoreboard object.
+ * This abstract class defines the behavior of a waterpolo scoreboard object.
  * An implementation which extends this class must:
  *    1. Also extend the Digit, SingleDigit, TwoDigit, Penalty and
  *       Clock classes.
@@ -92,10 +91,10 @@ import com.jtconnors.scoreboard.fx2.networking.FxMultipleSocketWriter;
  *       Scoreboard constructor, after a call to super() and before a
  *       call to init().
  *
- *  For an example implementation of HockeyScoreboard, look at the
- *  scoreboard.fx2.impl.bulb.BulbHockeyScoreboard.java code.
+ *  For an example implementation of WaterpoloScoreboard, look at the
+ *  scoreboard.fx2.impl.bulb.BulbWaterpoloScoreboard.java code.
  */
-public abstract class HockeyScoreboard extends ScoreboardWithClock
+public abstract class WaterpoloScoreboard extends ScoreboardWithClock
         implements XMLReaderInterface {
 
     private final static Logger LOGGER
@@ -147,16 +146,15 @@ public abstract class HockeyScoreboard extends ScoreboardWithClock
     /*
      * XML Writer for the scoreboard
      */
-    HockeyScoreboardXMLOutput hockeyScoreboardXMLOutput;
-
+    WaterpoloScoreboardXMLOutput waterpoloScoreboardXMLOutput;
     /*
      * XML Reader for the scoreboard
      */
-    XMLInput hockeyScoreboardXMLInput;
+    XMLInput waterpoloScoreboardXMLInput;
     /*
  ****************************************************************************
  *  The following variables represent configurable nodes that can be        *
- *  displayed on a remote hockey scoreboard.  These must be public so that  *
+ *  displayed on a remote waterpolo scoreboard.  These must be public so that  *
  *  we can use reflection to get their values.                              *
  *                                                                          *
  *  Note: any change below will require, at minimum, changes throughout     *
@@ -165,7 +163,7 @@ public abstract class HockeyScoreboard extends ScoreboardWithClock
  /*
      * Reference to this instance
      */
-    public HockeyScoreboard hockeyScoreboard = this;
+    public WaterpoloScoreboard waterpoloScoreboard = this;
     /*
      * TextNodes to display
      */
@@ -216,7 +214,7 @@ public abstract class HockeyScoreboard extends ScoreboardWithClock
     /*
  ****************************************************************************
  *  End section containing declarations of configurable nodes for a         *
- *  remote hockey scoreboard.                                               *
+ *  remote waterpolo scoreboard.                                               *
  ****************************************************************************/
 
  /*
@@ -226,7 +224,7 @@ public abstract class HockeyScoreboard extends ScoreboardWithClock
     protected TextNode startStopButton;
     protected TextNode quitButton;
     /*
-     * Bounding Rectangle encompasses entire bounds of HockeyScoreboard
+     * Bounding Rectangle encompasses entire bounds of WaterpoloScoreboard
      */
     private Rectangle backgroundRect;
     /*
@@ -280,16 +278,16 @@ public abstract class HockeyScoreboard extends ScoreboardWithClock
     /*
      * Constructors
      */
-    public HockeyScoreboard() {
+    public WaterpoloScoreboard() {
         this(Constants.instance().DEFAULT_SCOREBOARD_WIDTH,
                 Constants.instance().DEFAULT_SCOREBOARD_HEIGHT, false);
     }
 
-    public HockeyScoreboard(double width, double height) {
+    public WaterpoloScoreboard(double width, double height) {
         this(width, height, false);
     }
 
-    public HockeyScoreboard(double width, double height,
+    public WaterpoloScoreboard(double width, double height,
             boolean remoteDisplay) {
         this.width = width;
         this.height = height;
@@ -311,9 +309,9 @@ public abstract class HockeyScoreboard extends ScoreboardWithClock
     }
 
     protected void init() {
-        HockeyScoreboardXMLSpec.init();
+        WaterpoloScoreboardXMLSpec.init();
         /*
-         * Populate configVariableMap after HockeyScoreboardXMLSpec ArrayLists
+         * Populate configVariableMap after WaterpoloScoreboardXMLSpec ArrayLists
          * have been initialized.
          */
         configVariableMap = new HashMap<>();
@@ -325,7 +323,7 @@ public abstract class HockeyScoreboard extends ScoreboardWithClock
             LOGGER.severe(ExceptionStackTraceAsString(e));
         }
         /*
-         * Populate updateVariableMap after HockeyScoreboardXMLSpec ArrayLists
+         * Populate updateVariableMap after WaterpoloScoreboardXMLSpec ArrayLists
          * have been initialized.
          */
         updateVariableMap = new HashMap<>();
@@ -340,23 +338,23 @@ public abstract class HockeyScoreboard extends ScoreboardWithClock
              * rather a component of each Penatly.
              */
             updateVariableMap.put(
-                    HockeyScoreboardXMLSpec.NAME_homePenalty1playerNumber,
+                    WaterpoloScoreboardXMLSpec.NAME_homePenalty1playerNumber,
                     homePenalty1.getPlayerNumberField());
             updateVariableMap.put(
-                    HockeyScoreboardXMLSpec.NAME_guestPenalty1playerNumber,
+                    WaterpoloScoreboardXMLSpec.NAME_guestPenalty1playerNumber,
                     guestPenalty1.getPlayerNumberField());
             updateVariableMap.put(
-                    HockeyScoreboardXMLSpec.NAME_homePenalty2playerNumber,
+                    WaterpoloScoreboardXMLSpec.NAME_homePenalty2playerNumber,
                     homePenalty2.getPlayerNumberField());
             updateVariableMap.put(
-                    HockeyScoreboardXMLSpec.NAME_guestPenalty2playerNumber,
+                    WaterpoloScoreboardXMLSpec.NAME_guestPenalty2playerNumber,
                     guestPenalty2.getPlayerNumberField());
         } catch (NoSuchFieldException | SecurityException e) {
             LOGGER.severe(ExceptionStackTraceAsString(e));
         }
 
         positionNodes();
-        hockeyScoreboardXMLOutput = new HockeyScoreboardXMLOutput(
+        waterpoloScoreboardXMLOutput = new WaterpoloScoreboardXMLOutput(
                 new ScoreboardOutputInterfaceImpl());
         setOnKeyPressed((KeyEvent ke) -> {
             processKeyEvent(ke.getCode());
@@ -365,7 +363,7 @@ public abstract class HockeyScoreboard extends ScoreboardWithClock
         requestFocus();
 
         if (Globals.instance().dumpConfig) {
-            hockeyScoreboardXMLOutput.dumpDisplayableNodes();
+            waterpoloScoreboardXMLOutput.dumpDisplayableNodes();
         }
     }
 
@@ -439,8 +437,8 @@ public abstract class HockeyScoreboard extends ScoreboardWithClock
             setupPenalty1Row();
             setupPenaltyTextRow();
             setupPenalty2Row();
-//            setupLogoRow();
-//            logoImageView.setVisible(true);
+            setupLogoRow();
+            logoImageView.setVisible(true);
             setupControlRow();
             setupStatusRow(0);
             /*
@@ -473,7 +471,7 @@ public abstract class HockeyScoreboard extends ScoreboardWithClock
 
     private void setupClockRow() {
         clockRowOffset = verticalBorder;
-        homeText = new TextNode(HockeyScoreboardXMLSpec.NAME_homeText,
+        homeText = new TextNode(WaterpoloScoreboardXMLSpec.NAME_homeText,
                 "HOME", fontSize);
         homeText.setLayoutY(clockRowOffset);
         homeText.setLayoutX(horizontalBorder);
@@ -485,7 +483,7 @@ public abstract class HockeyScoreboard extends ScoreboardWithClock
         clock.setLayoutXOption(LayoutXOptions.CENTER);
         getChildren().add(clock);
 
-        guestText = new TextNode(HockeyScoreboardXMLSpec.NAME_guestText,
+        guestText = new TextNode(WaterpoloScoreboardXMLSpec.NAME_guestText,
                 "GUEST", fontSize);
         guestText.setLayoutY(clockRowOffset);
         guestText.setLayoutX(width - guestText.getLayoutBounds().getWidth()
@@ -512,7 +510,7 @@ public abstract class HockeyScoreboard extends ScoreboardWithClock
     private void setupPeriodRow() {
         periodRowOffset = clockRowOffset + clock.getLayoutBounds().getHeight()
                 + verticalSpacer;
-        periodText = new TextNode(HockeyScoreboardXMLSpec.NAME_periodText,
+        periodText = new TextNode(WaterpoloScoreboardXMLSpec.NAME_periodText,
                 "Period", fontSize);
         Double totalWidth = periodText.getLayoutBounds().getWidth()
                 + horizontalSpacer + period.getLayoutBounds().getWidth();
@@ -534,7 +532,7 @@ public abstract class HockeyScoreboard extends ScoreboardWithClock
         shotsOnGoalOffset = periodRowOffset
                 + period.getLayoutBounds().getHeight() + verticalSpacer;
         shotsOnGoalText = new TextNode(
-                HockeyScoreboardXMLSpec.NAME_shotsOnGoalText,
+                WaterpoloScoreboardXMLSpec.NAME_shotsOnGoalText,
                 "Shots On Goal", fontSize);
         Double totalWidth = homeShotsOnGoal.getLayoutBounds().getWidth()
                 + horizontalSpacer
@@ -591,13 +589,13 @@ public abstract class HockeyScoreboard extends ScoreboardWithClock
         penaltyTextRowOffset = penalty1RowOffset
                 + homePenalty1.getLayoutBounds().getHeight() + verticalSpacer;
         homePenaltyText = new TextNode(
-                HockeyScoreboardXMLSpec.NAME_homePenaltyText,
+                WaterpoloScoreboardXMLSpec.NAME_homePenaltyText,
                 "Player   Penalty", fontSize);
         homePenaltyText.setLayoutY(penaltyTextRowOffset);
         homePenaltyText.setLayoutX(homePenalty1.getLayoutX());
         homePenaltyText.setLayoutXOption(LayoutXOptions.LEFT_JUSTIFY);
         guestPenaltyText = new TextNode(
-                HockeyScoreboardXMLSpec.NAME_guestPenaltyText,
+                WaterpoloScoreboardXMLSpec.NAME_guestPenaltyText,
                 "Player   Penalty", fontSize);
         guestPenaltyText.setLayoutY(penaltyTextRowOffset);
         guestPenaltyText.setLayoutX(guestPenalty1.getLayoutX());
@@ -814,10 +812,10 @@ public abstract class HockeyScoreboard extends ScoreboardWithClock
      * Remote display methods
      */
     private void setupRemoteDisplay() {
-        hockeyScoreboardXMLInput = new HockeyScoreboardXMLInput(
+        waterpoloScoreboardXMLInput = new WaterpoloScoreboardXMLInput(
                 new ScoreboardInputInterfaceImpl());
-        hockeyScoreboardXMLInput.readConfigFile();
-        hockeyScoreboardXMLInput.initStringXMLDocumentBuilder();
+        waterpoloScoreboardXMLInput.readConfigFile();
+        waterpoloScoreboardXMLInput.initStringXMLDocumentBuilder();
         if (Globals.instance().useIPSocket) {
             FxGlobals.instance().socketReader = new FxSocketReader(this,
                     Globals.instance().host, Globals.instance().port,
@@ -832,34 +830,34 @@ public abstract class HockeyScoreboard extends ScoreboardWithClock
         }
     }
 
-    public HockeyScoreboard getHockeyScoreboard(String name) {
-        return hockeyScoreboard;
+    public WaterpoloScoreboard getWaterpoloScoreboard(String name) {
+        return waterpoloScoreboard;
     }
 
     private DisplayableWithDigits getUpdateVariable(String name) {
-        if (name.equals(HockeyScoreboardXMLSpec.NAME_clock)) {
+        if (name.equals(WaterpoloScoreboardXMLSpec.NAME_clock)) {
             return clock;
-        } else if (name.equals(HockeyScoreboardXMLSpec.NAME_homeShotsOnGoal)) {
+        } else if (name.equals(WaterpoloScoreboardXMLSpec.NAME_homeShotsOnGoal)) {
             return homeShotsOnGoal;
-        } else if (name.equals(HockeyScoreboardXMLSpec.NAME_guestShotsOnGoal)) {
+        } else if (name.equals(WaterpoloScoreboardXMLSpec.NAME_guestShotsOnGoal)) {
             return guestShotsOnGoal;
-        } else if (name.equals(HockeyScoreboardXMLSpec.NAME_homeScore)) {
+        } else if (name.equals(WaterpoloScoreboardXMLSpec.NAME_homeScore)) {
             return homeScore;
-        } else if (name.equals(HockeyScoreboardXMLSpec.NAME_guestScore)) {
+        } else if (name.equals(WaterpoloScoreboardXMLSpec.NAME_guestScore)) {
             return guestScore;
-        } else if (name.equals(HockeyScoreboardXMLSpec.NAME_period)) {
+        } else if (name.equals(WaterpoloScoreboardXMLSpec.NAME_period)) {
             return period;
-        } else if (name.equals(HockeyScoreboardXMLSpec.NAME_homePenalty1)) {
+        } else if (name.equals(WaterpoloScoreboardXMLSpec.NAME_homePenalty1)) {
             return homePenalty1;
-        } else if (name.equals(HockeyScoreboardXMLSpec.NAME_guestPenalty1)) {
+        } else if (name.equals(WaterpoloScoreboardXMLSpec.NAME_guestPenalty1)) {
             return guestPenalty1;
-        } else if (name.equals(HockeyScoreboardXMLSpec.NAME_homePenalty2)) {
+        } else if (name.equals(WaterpoloScoreboardXMLSpec.NAME_homePenalty2)) {
             return homePenalty2;
-        } else if (name.equals(HockeyScoreboardXMLSpec.NAME_guestPenalty2)) {
+        } else if (name.equals(WaterpoloScoreboardXMLSpec.NAME_guestPenalty2)) {
             return guestPenalty2;
-        } else if (HockeyScoreboardXMLSpec.isPlayerNumberVariable(name)) {
+        } else if (WaterpoloScoreboardXMLSpec.isPlayerNumberVariable(name)) {
             return getPlayerNumber(name);
-        } else if (name.equals(HockeyScoreboardXMLSpec.NAME_horn)) {
+        } else if (name.equals(WaterpoloScoreboardXMLSpec.NAME_horn)) {
             return horn;
         }
         return null;
@@ -867,22 +865,22 @@ public abstract class HockeyScoreboard extends ScoreboardWithClock
 
     private DisplayableWithDigits getPlayerNumber(String name) {
         switch (name) {
-            case HockeyScoreboardXMLSpec.NAME_homePenalty1playerNumber:
+            case WaterpoloScoreboardXMLSpec.NAME_homePenalty1playerNumber:
                 if (homePenalty1 != null) {
                     return homePenalty1.getPlayerNumber();
                 }
                 break;
-            case HockeyScoreboardXMLSpec.NAME_guestPenalty1playerNumber:
+            case WaterpoloScoreboardXMLSpec.NAME_guestPenalty1playerNumber:
                 if (guestPenalty1 != null) {
                     return guestPenalty1.getPlayerNumber();
                 }
                 break;
-            case HockeyScoreboardXMLSpec.NAME_homePenalty2playerNumber:
+            case WaterpoloScoreboardXMLSpec.NAME_homePenalty2playerNumber:
                 if (homePenalty2 != null) {
                     return homePenalty2.getPlayerNumber();
                 }
                 break;
-            case HockeyScoreboardXMLSpec.NAME_guestPenalty2playerNumber:
+            case WaterpoloScoreboardXMLSpec.NAME_guestPenalty2playerNumber:
                 if (guestPenalty2 != null) {
                     return guestPenalty2.getPlayerNumber();
                 }
@@ -895,7 +893,7 @@ public abstract class HockeyScoreboard extends ScoreboardWithClock
 
     private ImageView newImageView(String name, String url) {
         Image logoImage = new Image(url);
-        if (name.equals(HockeyScoreboardXMLSpec.NAME_logoImageView)) {
+        if (name.equals(WaterpoloScoreboardXMLSpec.NAME_logoImageView)) {
             logoImageView = new ImageView(logoImage);
             return logoImageView;
         }
@@ -977,12 +975,12 @@ public abstract class HockeyScoreboard extends ScoreboardWithClock
  ****************************************************************************/
     @Override
     public void handleUpdate(String msg) {
-        hockeyScoreboardXMLInput.readUpdateStr(msg);
+        waterpoloScoreboardXMLInput.readUpdateStr(msg);
     }
 
     /*   
  ****************************************************************************
- *  HockeyScorboardInputInterface implementation methods                    *
+ *  WaterpoloScorboardInputInterface implementation methods                    *
  ****************************************************************************/
     class ScoreboardInputInterfaceImpl implements ScoreboardInputInterface {
 
@@ -993,7 +991,7 @@ public abstract class HockeyScoreboard extends ScoreboardWithClock
         private Object getConfigVariable(String name) {
             if (name != null && !name.equals("null")) {
                 try {
-                    return configVariableMap.get(name).get(hockeyScoreboard);
+                    return configVariableMap.get(name).get(waterpoloScoreboard);
                 } catch (IllegalAccessException | IllegalArgumentException e) {
                     LOGGER.severe(ExceptionStackTraceAsString(e));
                 }
@@ -1066,7 +1064,7 @@ public abstract class HockeyScoreboard extends ScoreboardWithClock
             Field field = configVariableMap.get(name);
             TextNode textNode = new TextNode(name, content, height);
             try {
-                field.set(hockeyScoreboard, textNode);
+                field.set(waterpoloScoreboard, textNode);
             } catch (IllegalAccessException | IllegalArgumentException e) {
                 LOGGER.severe(ExceptionStackTraceAsString(e));
             }
@@ -1110,7 +1108,7 @@ public abstract class HockeyScoreboard extends ScoreboardWithClock
 
         @Override
         public void setupScoreboard(String name, int backgroundColorVal) {
-            HockeyScoreboard hs = (HockeyScoreboard) getConfigVariable(name);
+            WaterpoloScoreboard hs = (WaterpoloScoreboard) getConfigVariable(name);
             if (hs != null) {
                 hs.setBackgroundColor(
                         FXUtils.intValueToFXColor(backgroundColorVal));
@@ -1198,7 +1196,7 @@ public abstract class HockeyScoreboard extends ScoreboardWithClock
 
         @Override
         public Object getScoreboard() {
-            return hockeyScoreboard;
+            return waterpoloScoreboard;
         }
 
         @Override
@@ -1226,9 +1224,9 @@ public abstract class HockeyScoreboard extends ScoreboardWithClock
         @Override
         public String getFieldName(Object displayable) {
             if (displayable != null) {
-                for (Field field : hockeyScoreboard.getClass().getFields()) {
+                for (Field field : waterpoloScoreboard.getClass().getFields()) {
                     try {
-                        Object fieldObj = field.get(hockeyScoreboard);
+                        Object fieldObj = field.get(waterpoloScoreboard);
                         if (fieldObj instanceof Displayable) {
                             if (fieldObj.equals(displayable)) {
                                 return field.getName();

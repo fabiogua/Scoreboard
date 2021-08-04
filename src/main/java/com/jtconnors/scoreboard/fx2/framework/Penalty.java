@@ -146,18 +146,6 @@ public abstract class Penalty extends DisplayableWithDigits {
     private Rectangle dash;
     private Circle bottomPartOfColon;
     private Circle topPartOfColon;
-    
-    /*
-     * Visual cue via popup to let user know that the Penalty player
-     * number cannot be set until a penalty time is specified.
-     */
-    private final String tipStr = 
-            "Penalty time must be\nset prior to player number";
-    private final Tooltip tooltip = new Tooltip(tipStr);
-    /*
-     * Mechanism to block playerNumber when not in use.
-     */
-    private Rectangle playerNumberMouseBlocker;
 
 /*
  ****************************************************************************
@@ -236,20 +224,11 @@ public abstract class Penalty extends DisplayableWithDigits {
         secondsDigit.setLayoutX(tenSecondsDigit.getLayoutX() +
                 digitWidth + (Constants.instance().INTER_DIGIT_GAP_FRACTION *
                 digitWidth));
-        /*
-         * Mechanism to block input to player number when not in use
-         */
-        playerNumberMouseBlocker = new Rectangle();
-        playerNumberMouseBlocker.setWidth(
-                playerNumber.getLayoutBounds().getWidth());
-        playerNumberMouseBlocker.setHeight(
-                playerNumber.getLayoutBounds().getHeight());
-        playerNumberMouseBlocker.setFill(Color.TRANSPARENT);
-        playerNumberMouseBlocker.setVisible(false);
+
 
         getChildren().addAll(playerNumber, dash,
                 minutesDigit, tenSecondsDigit, secondsDigit,
-                bottomPartOfColon, topPartOfColon, playerNumberMouseBlocker);
+                bottomPartOfColon, topPartOfColon);
 
         boundingRect.setWidth(getLayoutBounds().getWidth());
         boundingRect.setHeight(getLayoutBounds().getHeight());
@@ -386,8 +365,6 @@ public abstract class Penalty extends DisplayableWithDigits {
         playerNumber.setAllowTrailingZeroes(true);
         playerNumber.setDigitsDisplayState(DigitsDisplayStates.BLANK);
         positionDigits();
-        Tooltip.install(playerNumberMouseBlocker, tooltip);
-        playerNumberMouseBlocker.setVisible(true);
         setDigits();
 
         getChildren().add(createKeyPads());
@@ -442,32 +419,13 @@ public abstract class Penalty extends DisplayableWithDigits {
                 if (getPrevOverallValue() == 0 && getOverallValue() > 0) {
                     playerNumber.setDigitsDisplayState(
                             DigitsDisplayStates.REGULAR);
-                    playerNumberMouseBlocker.setVisible(false);
                 } // Transition from non-zero to zero
                 else if (getPrevOverallValue() > 0 && getOverallValue() == 0) {
                     playerNumber.setDigitsDisplayState(
                             DigitsDisplayStates.BLANK);
-                    playerNumberMouseBlocker.setVisible(true);
                     playerNumber.setOverallValue(0);
                 }
             }
         });
-    }
-
-    /*
-     * Overrides the getFocusedDigit() method found in ParentsWithDigits to
-     * accommodate for the inserted transitionKludge.
-     */
-    @Override
-    protected FocusableParent getFocusedDigit() {
-        for (Digit digit : digitArr) {
-            if (digit.hasFocusHint()) {
-                return digit;
-            }
-        }
-        if (Globals.instance().lastFocused == transitionKludge) {
-            return Globals.instance().lastFocused;
-        }
-        return null;
     }
 }

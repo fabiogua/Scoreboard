@@ -37,7 +37,7 @@ import com.jtconnors.socket.Constants;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import com.jtconnors.scoreboard.fx2.framework.hockey.HockeyScoreboard;
-
+import com.jtconnors.scoreboard.fx2.framework.waterpolo.WaterpoloScoreboard;
 import com.jtconnors.scoreboard.common.Globals;
 
 public class FxSocketReader {
@@ -46,6 +46,7 @@ public class FxSocketReader {
             FxSocketReader.class.getName());
 
     private HockeyScoreboard hockeyScoreboard;
+    private WaterpoloScoreboard waterpoloScoreboard;
     private FxSocketClient fxSocketClient;
     private String host;
     private int port;
@@ -111,6 +112,26 @@ public class FxSocketReader {
             String host, int port,
             int debugFlags) {
         this.hockeyScoreboard = hockeyScoreboard;
+        this.host = host;
+        this.port = port;
+        this.debugFlags = debugFlags;
+    }
+
+    public FxSocketReader(WaterpoloScoreboard waterpoloScoreboard) {
+        this(waterpoloScoreboard, Constants.instance().DEFAULT_HOST,
+                Constants.instance().DEFAULT_PORT,
+                DebugFlags.instance().DEBUG_NONE);
+    }
+
+    public FxSocketReader(WaterpoloScoreboard waterpoloScoreboard,
+            String host, int port) {
+        this(waterpoloScoreboard, host, port, DebugFlags.instance().DEBUG_NONE);
+    }
+
+    public FxSocketReader(WaterpoloScoreboard waterpoloScoreboard,
+            String host, int port,
+            int debugFlags) {
+        this.waterpoloScoreboard = waterpoloScoreboard;
         this.host = host;
         this.port = port;
         this.debugFlags = debugFlags;
